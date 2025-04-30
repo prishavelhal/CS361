@@ -1,0 +1,54 @@
+body{
+    font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    background: #f7efee;
+    color: #531313
+}
+
+.navigationbar {
+    display: flex;
+    justify-content: space-between;
+    background-color: rgb(237, 204, 204);
+    padding: 0.2rem;
+}
+
+.linkstopage {
+    display: flex;
+    gap: 1.5rem;
+    list-style: none;
+}
+
+.linkstopage a:hover{
+    text-decoration: underline;
+}
+
+.linkstopage a {
+    color: #531313;
+   font-weight: bold;
+   text-decoration: dotted;
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.card {
+    background-color: rgb(234, 199, 199);
+    border: 1px;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.card h3{
+    margin-bottom: 0.5rem;
+    color: #5c2424
+}
+
+footer {
+    color: #5c2424;
+    padding: 2px;
+    margin: 20px
+}
