@@ -14,3 +14,222 @@
             <li><a href="savings.html" title="savings">Savings</a></li>
         </ul>
     </nav>
+ <main>
+        <h2>Expenses Tracker</h2>
+        <h3>This is your expense tracking page!</h3>
+        <p>Use this page to add income sources to keep track of your total income. Click the "add income" button to add a new income source or "edit" to edit it!</p>
+        <p>Note: Any data you enter will only be accessible by you to ensure your privacy. We do not track or store your data, it is solely for you.</p>
+        <div class="actionButton">
+            <button class="button" onclick="newExpense()">+ Add Expense</button>
+            <button class="buttonDelete" onclick="confirmDeleteAll()">Delete All</button>
+        </div>
+        <h3>Total Expenses: $<span id="totalExpenses">0.00</span></h3>
+        <table class="expenseData">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Amount</th>
+                    <th>Date</th>
+                    <th>Edit/Delete</th>
+                </tr>
+            </thead>
+            <tbody id="expenseDataTable">
+            </tbody>
+        </table>
+    </main>
+    
+    <div class="add" id="addExpense" style="display: none;">
+        <div class="addData">
+            <span class="close" onclick="closeExpense()">&times;</span>
+            <h3 id="expenseModalTitle">Add Expense</h3>
+            <form id="expenseEntry">
+                <label>Name:</label>
+                <input type="text" id="expenseName" required/>
+    
+                <label>Amount:</label>
+                <input type="number" step="0.01" id="expenseAmount" required/>
+    
+                <label>Date:</label>
+                <input type="date" id="expenseDate" required/>
+    
+                <input type="hidden" id="expenseId" value=""/>
+                <button type="submit" class="button">Submit</button>
+            </form>
+        </div>
+    </div>
+    
+    <div class="add" id="confirmModal" style="display: none;">
+        <div class="addData confirmDeletes">
+            <h3 id="confirmTitle">Confirm</h3>
+            <p id="confirmMessage">Are you sure you would like to delete?</p>
+            <div class="confirmButton">
+                <button class="button" id="confirmYes">yes</button>
+                <button class="button cancel" id="confirmNo">no</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        const expenseModal = document.getElementById("addExpense");
+        const confirmModal = document.getElementById("confirmModal");
+        const expenseForm = document.getElementById("expenseEntry");
+        const expenseTable = document.getElementById("expenseDataTable");
+        const expenseTotal = document.getElementById("totalExpense");
+        const confirmYes = document.getElementById("confirmYes");
+        const confirmNo = document.getElementById("confirmNo");
+    
+        let expenseList = [];
+        let currentEditId = null;
+        let deleteItemId = null;
+    
+        document.addEventListener("DOMContentLoaded", function() {
+            loadExpenseData();
+            displayExpenseData();
+        });
+    
+        function loadExpenseData() {
+            const savedExpenseData = localStorage.getItem("expenseData");
+            // if (savedIncomeData){
+            //     incomeList = JSON.parse(savedData);
+            // }
+            if(savedExpenseData && savedExpenseData !== "undefined"){
+                try {
+                    expenseList = JSON.parse(savedExpenseData);
+                    console.log("Loaded expense data: ", expenseList);
+                } catch (e) {
+                    console.error("Error parsing expense data:", e);
+                    expenseList = [];
+                }
+            } else{
+                expenseList = [];
+            }
+        }
+    
+        function saveExpenseData() {
+            localStorage.setItem("expenseData", JSON.stringify(expenseList));
+            const total = calcTotalExpense();
+            localStorage.setItem("totalExpense", total.toFixed(2));
+            console.log("Saved expense data", expenseList);
+        }
+    
+    
+        function calcTotalExpense(){
+            return expenseList.reduce((sum,entry) => sum + parseFloat(entry.amount), 0);   
+        }
+    
+        function displayExpenseData(){
+            expenseTable.innerHTML = "";
+    
+            if (expenseList.length === 0){
+                console.log("No expense entries to display");
+                return;
+            }
+    
+            expenseList.forEach((expense, index) => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${expense.name}</td>
+                    <td>$${parseFloat(expense.amount).toFixed(2)}</td>
+                    <td>${expense.date}</td>
+                    <td>
+                        <button class="actionButton edit" onclick="editExpense(${index})">Edit</button>
+                        <button class="actionButton delete" onclick="confirmDelete(${index})">Delete</button>
+                    </td>
+                `;
+                expenseTable.appendChild(row);
+            });
+    
+            const total = calcTotalExpense();
+            expenseTotal.textContent = total.toFixed(2);
+        }
+     
+        function newExpense(){
+            document.getElementById("expenseModalTitle").textContent = "Add Expense";
+            expenseForm.reset();
+            document.getElementById("expenseId").value = "";
+            currentEditId = null;
+            expenseModal.style.display = "block";
+        }
+    
+        function editExpense(index){
+            document.getElementById("expenseModalTitle").textContent = "Edit Expense";
+            const expense = expenseList[index];
+            document.getElementById("expenseName").value = expense.name;
+            document.getElementById("expenseAmount").value = expense.amount;
+            document.getElementById("expenseDate").value = expense.date;
+            document.getElementById("expenseId").value = index;
+            currentEditId = index;
+            expenseModal.style.display = "block";
+        }
+    
+        function confirmDelete(index){
+            deleteItemId = index;
+            document.getElementById("confirmTitle").textContent = "Delete Expense";
+            document.getElementById("confirmMessage").textContent = "Are you sure you would like to delete this entry?";
+            confirmModal.style.display = "block";
+    
+            confirmYes.onclick = function() {
+                deleteIncome(deleteItemId);
+                closeConfirmModal();
+            };
+            confirmNo.onclick = closeConfirmModal;
+        }
+    
+        function confirmDeleteAll(){
+            document.getElementById("confirmTitle").textContent = "Delete All Expense Entries";
+            document.getElementById("confirmMessage").textContent = "Are you sure you would like to delete ALL?";
+            confirmModal.style.display = "block";
+    
+            confirmYes.onclick = function (){
+                deleteAll();
+                closeConfirmModal();
+            };
+            confirmNo.onclick = closeConfirmModal;
+        }
+    
+        function deleteExpense(index) {
+            expenseList.splice(index, 1);
+            saveExpenseData();
+            displayExpenseData();
+        }
+    
+        function deleteAll(){
+            expenseList = [];
+            saveExpenseData();
+            displayExpenseData();
+        }
+    
+        function closeExpense() {
+            expenseModal.style.display = "none";
+            expenseForm.reset();
+        }
+    
+        function closeConfirmModal() {
+            confirmModal.style.display = "none";
+        }
+    
+        expenseForm.addEventListener("submit", function(e) {
+            e.preventDefault();
+            const name = document.getElementById("expenseName").value;
+            const amount = parseFloat(document.getElementById("expenseAmount").value);
+            const date = document.getElementById("expenseDate").value;
+    
+            const id = Date.now().toString();
+    
+            if(currentEditId !== null){
+                expenseList[currentEditId] = {name, amount, date, id: expenseList[currentEditId].id || id};
+            }else{
+                expenseList.push({name, amount, date, id});
+            }
+    
+            saveExpenseData();
+            displayExpenseData();
+            closeExpense();
+        });
+    
+        // function closeIncome(){
+        //     incomeModal.style.display = "none";
+        //     incomeForm.reset();
+        // }
+    </script>
+    </body>
+    </html>

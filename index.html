@@ -25,7 +25,7 @@
         </div>
         <div class="card">
             <h3>Total Expenses</h3>
-            <p>$200.00</p>
+            <p id="dashboard-expense"></p>
         </div>
         <div class="card">
             <h3>Savings Progess</h3>
@@ -40,7 +40,16 @@
     if (incomeDashboard) {
         document.getElementById("dashboard-income").textContent = `$${incomeDashboard}`;
     }
-   });
+//    });
+
+//    document.addEventListener("DOMContentLoaded", function() {
+    const expenseDashboard = localStorage.getItem("totalExpenses");
+    if (expenseDashboard) {
+        document.getElementById("dashboard-expense").textContent = `$${expenseDashboard}`;
+    } else {
+        document.getElementById("dashboard-expense").textContent = `$0.00`;
+    }
+ });
 </script>
 </body>
 </html>
