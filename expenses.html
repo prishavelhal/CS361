@@ -73,7 +73,7 @@
         const confirmModal = document.getElementById("confirmModal");
         const expenseForm = document.getElementById("expenseEntry");
         const expenseTable = document.getElementById("expenseDataTable");
-        const expenseTotal = document.getElementById("totalExpense");
+        const expenseTotal = document.getElementById("totalExpenses");
         const confirmYes = document.getElementById("confirmYes");
         const confirmNo = document.getElementById("confirmNo");
     
@@ -168,7 +168,7 @@
             confirmModal.style.display = "block";
     
             confirmYes.onclick = function() {
-                deleteIncome(deleteItemId);
+                deleteExpense(deleteItemId);
                 closeConfirmModal();
             };
             confirmNo.onclick = closeConfirmModal;

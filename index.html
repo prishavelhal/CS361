@@ -43,7 +43,7 @@
 //    });
 
 //    document.addEventListener("DOMContentLoaded", function() {
-    const expenseDashboard = localStorage.getItem("totalExpenses");
+    const expenseDashboard = localStorage.getItem("totalExpense");
     if (expenseDashboard) {
         document.getElementById("dashboard-expense").textContent = `$${expenseDashboard}`;
     } else {
