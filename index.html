@@ -21,7 +21,7 @@
     <div class="cards">
         <div class="card">
             <h3>Total Income</h3>
-            <p>$500.00</p>
+            <p id="dashboard-income"></p>
         </div>
         <div class="card">
             <h3>Total Expenses</h3>
@@ -33,5 +33,14 @@
         </div>
     </div>
 </main>
+
+<script>
+   document.addEventListener("DOMContentLoaded", function() {
+    const incomeDashboard = localStorage.getItem("totalIncome");
+    if (incomeDashboard) {
+        document.getElementById("dashboard-income").textContent = `$${incomeDashboard}`;
+    }
+   });
+</script>
 </body>
 </html>
