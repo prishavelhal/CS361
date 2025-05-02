@@ -30,6 +30,7 @@
                     <th>Name</th>
                     <th>Amount</th>
                     <th>Date</th>
+                    <th>Category</th>
                     <th>Edit/Delete</th>
                 </tr>
             </thead>
@@ -51,6 +52,18 @@
     
                 <label>Date:</label>
                 <input type="date" id="expenseDate" required/>
+
+                <label>Category:</label>
+                <select id="expenseCategory" required>
+                    <option value="-">Select a category</option>
+                    <option value="Groceries">Groceries</option>
+                    <option value="Utilities">Utilities</option>
+                    <option value="Transportation">Transportation</option>
+                    <option value="Insurance">Insurance</option>
+                    <option value="Personal">Personal</option>
+                    <option value="Recreational">Recreational</option>
+                    <option value="Other">Other</option>
+                </select>
     
                 <input type="hidden" id="expenseId" value=""/>
                 <button type="submit" class="button">Submit</button>
@@ -130,6 +143,7 @@
                     <td>${expense.name}</td>
                     <td>$${parseFloat(expense.amount).toFixed(2)}</td>
                     <td>${expense.date}</td>
+                    <td>${expense.category}</td>
                     <td>
                         <button class="actionButton edit" onclick="editExpense(${index})">Edit</button>
                         <button class="actionButton delete" onclick="confirmDelete(${index})">Delete</button>
@@ -157,6 +171,7 @@
             document.getElementById("expenseAmount").value = expense.amount;
             document.getElementById("expenseDate").value = expense.date;
             document.getElementById("expenseId").value = index;
+            document.getElementById("expenseCategory").value = index;
             currentEditId = index;
             expenseModal.style.display = "block";
         }
@@ -212,13 +227,14 @@
             const name = document.getElementById("expenseName").value;
             const amount = parseFloat(document.getElementById("expenseAmount").value);
             const date = document.getElementById("expenseDate").value;
+            const category = document.getElementById("expenseCategory").value;
     
             const id = Date.now().toString();
     
             if(currentEditId !== null){
-                expenseList[currentEditId] = {name, amount, date, id: expenseList[currentEditId].id || id};
+                expenseList[currentEditId] = {name, amount, date, category, id: expenseList[currentEditId].id || id};
             }else{
-                expenseList.push({name, amount, date, id});
+                expenseList.push({name, amount, date, category, id});
             }
     
             saveExpenseData();
