@@ -19,6 +19,9 @@
     <h4>Welcome to your finance dashboard!</h4>
     <p>Use this page to get a quick look at your finances OR Use the links in the nav bar to add income and expenses! Hover over the page names for Dashboard, Income, and Expenses, to learn more about each page before navigating!</p>
     <p>NOTE: Any data you enter will only be accessible by you to ensure your privacy. We do not track or store your data, it is solely for you.</p>
+    <h3>Reminder</h3>
+    <p id="reminder">Loading...</p>
+    
     <div class="cards">
         <div class="card">
             <h3>Total Income</h3>
@@ -28,11 +31,34 @@
             <h3>Total Expenses</h3>
             <p id="dashboard-expense"></p>
         </div>
+        <div class="card">
+            <h3>Net Balance</h3>
+            <p id="net-balance-value">Loading...</p>
+        </div>
+        <!-- <div class="card">
+            <h3>Budget</h3>
+            <form onsubmit="event.preventDefault(); budgetCategory();">
+                <input id="budgetCategory" type="text" placeholder="Category" required />
+                <input id="budgetAmount" type="number" placeholder="Amount" required />
+                <button type="submit">Add</button>
+            </form>
+
+            <table border="1" style="margin-top: 20px">
+                <thead>
+                    <tr><th>Category</th><th>Amount</th></tr>
+                </thead>
+                <tbody id="budgetTracker"></tbody>
+            </table>
+        </div> -->
         <!-- <div class="card">
             <h3>Savings Progess</h3>
             <p>55%</p>
         </div> -->
     </div>
+    
+    <h3></h3>
+    <button onclick="logout()">Logout</button>
+    
 </main>
 
 <script>
@@ -51,6 +77,118 @@
         document.getElementById("dashboard-expense").textContent = `$0.00`;
     }
  });
+
+    // //Login
+    // function login(){
+    //     const username = document.getELementById("username").value;
+    //     const password = document.getElementById("password").value;
+
+    //     fetch("http://localhost:5002/login", {
+    //         method: "POST",
+    //         headers: {
+    //             "Content-Type": "application/json"
+    //         },
+    //         body: JSON.stringify({username, password})
+    //     })
+    //     .then(response => response.json())
+    //     .then(data => {
+    //         if(data.user_id) {
+    //             localStorage.setItem("userId", data.user_id);
+    //             document.getElementById("login-message").textContent = "Login Successful!";
+    //         }else{
+    //             document.getElementById("login-message").textContent = "Invalid username or password, please try again." + (data.error || "Error");
+    //         }
+    //     });
+    // }
+
+    // //Budget
+    // function createBudget(){
+    //     fetch("http://localhost:5003/budget")
+    //     .then(response => response.json())
+    //     .then(data => {
+    //         const table = document.getElementById("budgetTracker");
+    //         table.innerHTML = "";
+    //         Object.entries(data).forEach(([category,amount]) => {
+    //             const row = document.createElement("tr");
+    //             row.innerHTML = `<td>${category}</td><td>$${amount.toFixed(2)}</td>`;
+    //             table.appendChild(row);
+    //         });
+    //     });
+       
+    // }
+
+    // function budgetCategory(){
+    //     const category = document.getElementById('budgetCategory').value;
+    //     const amount = parseFloat(document.getElementById("budgetAmount").value);
+
+    //     fetch("http://localhost:5003/budget", {
+    //         method: "POST",
+    //         headers: {
+    //             "Content-Type": "application/json"
+    //         },
+    //         body: JSON.stringify({category: category, amount: amount})
+    //     })
+    //     .then(response => response.json())
+    //     .then(data => {
+    //         document.getElementById("budgetCategory").value = "";
+    //         document.getElementById("budgetAmount").value = "";
+    //         createBudget();
+    //     });
+    // }
+    // document.addEventListener("DOMContentLoaded", createBudget);
+    //Login
+    document.addEventListener("DOMContentLoaded", function() {
+        const user = localStorage.getItem("userId");
+        if(!user){
+            window.location.href = "login.html";
+        }
+    });
+
+    //Reminder
+    function getReminder(){
+        fetch("http://localhost:5001/notifications")
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById("reminder").textContent = data.notification;
+        })
+        .catch(error => {
+            console.error("Error fetching reminder:", error);
+            document.getElementById("reminder").textContent = "None";
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", getReminder);
+
+    //Logout
+    function logout() {
+        localStorage.removeItem("user");
+        window.location.href = "login.html";
+    }
+
+    //Net Balance
+    document.addEventListener("DOMContentLoaded", function() {
+        const income = parseFloat(localStorage.getItem("totalIncome")) || 0;
+        const expense = parseFloat(localStorage.getItem("totalExpense")) || 0;
+
+        document.getElementById("dashboard-income").textContent = `$${income.toFixed(2)}`;
+        document.getElementById("dashboard-expense").textContent = `$${expense.toFixed(2)}`;
+
+        fetch("http://localhost:5004/net", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ income, expenses: expense })
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById("net-balance-value").textContent = `$${data.net.toFixed(2)}`;
+        })
+        .catch(error => {
+            document.getElementById("net-balance-value").textContent = "Error calculating net balance";
+            console.error("Error receiving net balance:", error);
+        });
+    });
 </script>
 </body>
 </html>
