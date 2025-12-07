@@ -4,7 +4,7 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)  
 
-# Example data for two users, each with multiple goals
+# Example data for a user
 savings_goals = {
     "goal_name": "Vacation", 
     "goal_amount": 1000, 

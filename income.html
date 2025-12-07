@@ -7,12 +7,22 @@
 </head>
 <body>
     <nav class="navigationbar">
-        <ul class="linkstopage">
-            <li><a href="index.html" title="Just want a quick glimpse of all your finances? Click on this link!">Dashboard</a></li>
-            <li><a href="expenses.html" title="Want to view your expenses in more detail and add new ones or edit current ones? Click on this link!">Expenses</a></li>
-            <li><a href="income.html" title="You are currently on the Income Tracker page.">Income</a></li>
-            <!-- <li><a href="savings.html" title="savings">Savings</a></li> -->
-        </ul>
+        <div class="nav-container">
+            <div class="linkstopage">
+                <a href="index.html" class="nav-link active" title="You are currently on the Dashboard page.">
+                    <span class="nav-icon">📊</span>
+                    <span class="nav-text">Dashboard</span>
+                </a>
+                <a href="expenses.html" class="nav-link" title="Want to view your expenses in more detail and add new ones or edit current ones? Click on this link!">
+                    <span class="nav-icon">💸</span>
+                    <span class="nav-text">Expenses</span>
+                </a>
+                <a href="income.html" class="nav-link" title="Want to view your income in more detail and add more income or edit current ones? Click on this link!">
+                    <span class="nav-icon">💵</span>
+                    <span class="nav-text">Income</span>
+                </a>
+            </div>
+        </div>
     </nav>
 <main>
     <h2>Income Tracker</h2>
@@ -21,7 +31,7 @@
     <p>NOTE: Any data you enter will only be accessible by you to ensure your privacy. We do not track or store your data, it is solely for you.</p>
     <div class="actionButton">
         <button class="button" onclick="newIncome()">+ Add Income</button>
-        <button class="buttonDelete" onclick="confirmDeleteAll()">Delete All</button>
+        <button class="btn btn-danger" onclick="confirmDeleteAll()">Delete All</button>
     </div>
     <h3>Total Income: $<span id="totalIncome">0.00</span></h3>
     <table class="incomeData">

@@ -8,6 +8,7 @@
 <body>
     <main>
         <h2>Login</h2>
+        <h4>For testing purposes username:user123 password:password123</h4>
             <form onsubmit="event.preventDefault(); login();">
                 <input id="username" type="text" placeholder="Username" required />
                 <input id="password" type="password" placeholder="Password" required />
@@ -17,7 +18,7 @@
     </main>
 
     <script>
-         //Login
+    //Login microservice
     function login(){
         const username = document.getElementById("username").value;
         const password = document.getElementById("password").value;

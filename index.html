@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8"/>
@@ -11,7 +11,6 @@
             <li><a href="index.html" title="You are currently on the Dashboard page.">Dashboard</a></li>
             <li><a href="expenses.html" title="Want to view your expenses in more detail and add new ones or edit current ones? Click on this link!">Expenses</a></li>
             <li><a href="income.html" title="Want to view your income in more detail and add more income or edit current ones? Click on this link!">Income</a></li>
-            <!-- <li><a href="savings.html" title="savings">Savings</a></li> -->
         </ul>
     </nav>
 <main>
@@ -35,25 +34,13 @@
             <h3>Net Balance</h3>
             <p id="net-balance-value">Loading...</p>
         </div>
-        <!-- <div class="card">
-            <h3>Budget</h3>
-            <form onsubmit="event.preventDefault(); budgetCategory();">
-                <input id="budgetCategory" type="text" placeholder="Category" required />
-                <input id="budgetAmount" type="number" placeholder="Amount" required />
-                <button type="submit">Add</button>
-            </form>
-
-            <table border="1" style="margin-top: 20px">
-                <thead>
-                    <tr><th>Category</th><th>Amount</th></tr>
-                </thead>
-                <tbody id="budgetTracker"></tbody>
-            </table>
-        </div> -->
-        <!-- <div class="card">
-            <h3>Savings Progess</h3>
-            <p>55%</p>
-        </div> -->
+        <div class="card">
+            <h3>Savings Progress</h3>
+            <div id="savings-progress" style="background-color: beige; border-radius: 5px; width: auto;">
+                <div id="savings-progress-fill" style="background-color: #a03c3c; width: 0%; height: 20px; border-radius:5px"></div>
+            </div>
+            <p id="savings-text">Loading...</p>
+        </div>
     </div>
     
     <h3></h3>
@@ -67,9 +54,6 @@
     if (incomeDashboard) {
         document.getElementById("dashboard-income").textContent = `$${incomeDashboard}`;
     }
-//    });
-
-//    document.addEventListener("DOMContentLoaded", function() {
     const expenseDashboard = localStorage.getItem("totalExpense");
     if (expenseDashboard) {
         document.getElementById("dashboard-expense").textContent = `$${expenseDashboard}`;
@@ -78,65 +62,7 @@
     }
  });
 
-    // //Login
-    // function login(){
-    //     const username = document.getELementById("username").value;
-    //     const password = document.getElementById("password").value;
-
-    //     fetch("http://localhost:5002/login", {
-    //         method: "POST",
-    //         headers: {
-    //             "Content-Type": "application/json"
-    //         },
-    //         body: JSON.stringify({username, password})
-    //     })
-    //     .then(response => response.json())
-    //     .then(data => {
-    //         if(data.user_id) {
-    //             localStorage.setItem("userId", data.user_id);
-    //             document.getElementById("login-message").textContent = "Login Successful!";
-    //         }else{
-    //             document.getElementById("login-message").textContent = "Invalid username or password, please try again." + (data.error || "Error");
-    //         }
-    //     });
-    // }
-
-    // //Budget
-    // function createBudget(){
-    //     fetch("http://localhost:5003/budget")
-    //     .then(response => response.json())
-    //     .then(data => {
-    //         const table = document.getElementById("budgetTracker");
-    //         table.innerHTML = "";
-    //         Object.entries(data).forEach(([category,amount]) => {
-    //             const row = document.createElement("tr");
-    //             row.innerHTML = `<td>${category}</td><td>$${amount.toFixed(2)}</td>`;
-    //             table.appendChild(row);
-    //         });
-    //     });
-       
-    // }
-
-    // function budgetCategory(){
-    //     const category = document.getElementById('budgetCategory').value;
-    //     const amount = parseFloat(document.getElementById("budgetAmount").value);
-
-    //     fetch("http://localhost:5003/budget", {
-    //         method: "POST",
-    //         headers: {
-    //             "Content-Type": "application/json"
-    //         },
-    //         body: JSON.stringify({category: category, amount: amount})
-    //     })
-    //     .then(response => response.json())
-    //     .then(data => {
-    //         document.getElementById("budgetCategory").value = "";
-    //         document.getElementById("budgetAmount").value = "";
-    //         createBudget();
-    //     });
-    // }
-    // document.addEventListener("DOMContentLoaded", createBudget);
-    //Login
+    //Login microservice
     document.addEventListener("DOMContentLoaded", function() {
         const user = localStorage.getItem("userId");
         if(!user){
@@ -144,7 +70,7 @@
         }
     });
 
-    //Reminder
+    //Reminder microservice
     function getReminder(){
         fetch("http://localhost:5001/notifications")
         .then(response => response.json())
@@ -165,7 +91,7 @@
         window.location.href = "login.html";
     }
 
-    //Net Balance
+    //Net Balance microservice
     document.addEventListener("DOMContentLoaded", function() {
         const income = parseFloat(localStorage.getItem("totalIncome")) || 0;
         const expense = parseFloat(localStorage.getItem("totalExpense")) || 0;
@@ -189,6 +115,174 @@
             console.error("Error receiving net balance:", error);
         });
     });
+
+    //Savings progress microservice
+    fetch('http://localhost:5005/progress')
+    .then(response => response.json())
+    .then(data => {
+        const progress = data.progress;
+        document.getElementById("savings-progress-fill").style.width = `${progress}%`;
+        document.getElementById("savings-text").textContent = `${data.goal_name} Progress: $${data.current_amount} of $${data.goal_amount} (${progress}%)`;
+    })
+    .catch(error => {
+        document.getElementById("savings-text").textContent = "Error calculating savings progress";
+        console.error("Error receiving savings progress:", error);
+    });
 </script>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance Dashboard</title>
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+    <nav class="navigationbar">
+        <div class="nav-container">
+            <div class="linkstopage">
+                <a href="index.html" class="nav-link active" title="You are currently on the Dashboard page.">
+                    <span class="nav-icon">📊</span>
+                    <span class="nav-text">Dashboard</span>
+                </a>
+                <a href="expenses.html" class="nav-link" title="Want to view your expenses in more detail and add new ones or edit current ones? Click on this link!">
+                    <span class="nav-icon">💸</span>
+                    <span class="nav-text">Expenses</span>
+                </a>
+                <a href="income.html" class="nav-link" title="Want to view your income in more detail and add more income or edit current ones? Click on this link!">
+                    <span class="nav-icon">💵</span>
+                    <span class="nav-text">Income</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <div class="dashboard-header">
+            <h2>💰 Finance Dashboard</h2>
+            <h4>Welcome to your finance dashboard!</h4>
+            <p>Use this page to get a quick look at your finances OR Use the links in the nav bar to add income and expenses! Hover over the page names for Dashboard, Income, and Expenses, to learn more about each page before navigating!</p>
+            <p>NOTE: Any data you enter will only be accessible by you to ensure your privacy. We do not track or store your data, it is solely for you.</p>
+        </div>
+
+        <div class="reminder-section">
+            <h3>💡 Financial Reminder</h3>
+            <p id="reminder">Loading...</p>
+        </div>
+        
+        <div class="cards">
+            <div class="card">
+                <h3>Total Income</h3>
+                <p id="dashboard-income">$0.00</p>
+            </div>
+            <div class="card">
+                <h3>Total Expenses</h3>
+                <p id="dashboard-expense">$0.00</p>
+            </div>
+            <div class="card">
+                <h3>Net Balance</h3>
+                <p id="net-balance-value">Loading...</p>
+            </div>
+            <div class="card">
+                <h3>Savings Progress</h3>
+                <div id="savings-progress">
+                    <div id="savings-progress-fill" style="width: 0%"></div>
+                </div>
+                <p id="savings-text">Loading...</p>
+            </div>
+        </div>
+        
+        <div class="logout-section">
+            <button onclick="logout()">🚪 Logout</button>
+        </div>
+    </main>
+
+    <script>
+       document.addEventListener("DOMContentLoaded", function() {
+        const incomeDashboard = localStorage.getItem("totalIncome");
+        if (incomeDashboard) {
+            document.getElementById("dashboard-income").textContent = `$${incomeDashboard}`;
+        } else {
+            document.getElementById("dashboard-income").textContent = `$0.00`;
+        }
+        const expenseDashboard = localStorage.getItem("totalExpense");
+        if (expenseDashboard) {
+            document.getElementById("dashboard-expense").textContent = `$${expenseDashboard}`;
+        } else {
+            document.getElementById("dashboard-expense").textContent = `$0.00`;
+        }
+     });
+
+        //Login microservice
+        document.addEventListener("DOMContentLoaded", function() {
+            const user = localStorage.getItem("userId");
+            if(!user){
+                window.location.href = "login.html";
+            }
+        });
+
+        //Reminder microservice
+        function getReminder(){
+            fetch("http://localhost:5001/notifications")
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("reminder").textContent = data.notification;
+            })
+            .catch(error => {
+                console.error("Error fetching reminder:", error);
+                document.getElementById("reminder").textContent = "Review your monthly budget and set savings goals!";
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", getReminder);
+
+        //Logout
+        function logout() {
+            localStorage.removeItem("user");
+            window.location.href = "login.html";
+        }
+
+        //Net Balance microservice
+        document.addEventListener("DOMContentLoaded", function() {
+            const income = parseFloat(localStorage.getItem("totalIncome")) || 0;
+            const expense = parseFloat(localStorage.getItem("totalExpense")) || 0;
+
+            document.getElementById("dashboard-income").textContent = `$${income.toFixed(2)}`;
+            document.getElementById("dashboard-expense").textContent = `$${expense.toFixed(2)}`;
+
+            fetch("http://localhost:5004/net", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ income, expenses: expense })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("net-balance-value").textContent = `$${data.net.toFixed(2)}`;
+            })
+            .catch(error => {
+                document.getElementById("net-balance-value").textContent = "Error calculating net balance";
+                console.error("Error receiving net balance:", error);
+            });
+        });
+
+        //Savings progress microservice
+        fetch('http://localhost:5005/progress')
+        .then(response => response.json())
+        .then(data => {
+            const progress = data.progress;
+            document.getElementById("savings-progress-fill").style.width = `${progress}%`;
+            document.getElementById("savings-progress-fill").textContent = `${progress}%`;
+            document.getElementById("savings-text").textContent = `${data.goal_name} Progress: $${data.current_amount} of $${data.goal_amount} (${progress}%)`;
+        })
+        .catch(error => {
+            document.getElementById("savings-text").textContent = "Error calculating savings progress";
+            console.error("Error receiving savings progress:", error);
+        });
+    </script>
 </body>
 </html>
