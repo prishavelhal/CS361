@@ -1,10 +1,11 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+import os
 
 app = Flask(__name__)
 CORS(app)
 
-# create test users
+# Test user
 user = {
     "id": "test-user",
     "username": "user123",
@@ -20,7 +21,12 @@ def login():
     if username == user["username"] and password == user["password"]:
         return jsonify({"message": "Login Successful!", "user_id": user["id"]}), 200
     else:
-        return jsonify({"message": " Error."}), 401
+        return jsonify({"message": "Error."}), 401
+
+@app.route('/', methods=['GET'])
+def health():
+    return jsonify({"status": "running", "service": "login"})
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5002)
+    port = int(os.environ.get('PORT', 5002))
+    app.run(host='0.0.0.0', port=port, debug=False)

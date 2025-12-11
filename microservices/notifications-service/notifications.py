@@ -1,6 +1,7 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
 import random
+import os
 
 app = Flask(__name__)
 CORS(app)
@@ -18,5 +19,10 @@ def get_notification():
     reminder = random.choice(reminders)
     return jsonify({'notification': reminder})
 
+@app.route('/', methods=['GET'])
+def health():
+    return jsonify({"status": "running", "service": "notifications"})
+
 if __name__ == '__main__':
-    app.run(debug=True, port=5001)
+    port = int(os.environ.get('PORT', 5001))
+    app.run(host='0.0.0.0', port=port, debug=False)
