@@ -9,7 +9,7 @@ CORS(app)
 savings_goals = {
     "goal_name": "Vacation", 
     "goal_amount": 1000, 
-    "current_amount": 500,
+    "current_amount": 573,
 }
 
 @app.route('/progress', methods=['GET'])
