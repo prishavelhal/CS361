@@ -306,11 +306,11 @@
         document.addEventListener("DOMContentLoaded", function() {
             // Load income from localStorage
             const income = parseFloat(localStorage.getItem("totalIncome")) || 0;
-            document.getElementById("dashboard-income").textContent = `$${income.toFixed(2)}`;
+            document.getElementById("dashboard-income").textContent = `${income.toFixed(2)}`;
             
             // Load expenses from localStorage
             const expense = parseFloat(localStorage.getItem("totalExpense")) || 0;
-            document.getElementById("dashboard-expense").textContent = `$${expense.toFixed(2)}`;
+            document.getElementById("dashboard-expense").textContent = `${expense.toFixed(2)}`;
             
             // Calculate net balance
             const netBalance = income - expense;
@@ -328,7 +328,7 @@
             })
             .then(response => response.json())
             .then(data => {
-                document.getElementById("net-balance-value").textContent = `$${data.net.toFixed(2)}`;
+                document.getElementById("net-balance-value").textContent = `${data.net.toFixed(2)}`;
                 const netVal = data.net;
                 netElement.className = netVal >= 0 ? 'positive' : 'negative';
             })
@@ -352,7 +352,7 @@
             });
             
             // Fetch reminder from microservice
-            fetch("http://localhost:5001/notifications")
+            fetch("https://notifications-y13l.onrender.com/notifications")
             .then(response => response.json())
             .then(data => {
                 document.getElementById("reminder").textContent = data.notification;

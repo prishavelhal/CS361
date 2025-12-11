@@ -292,7 +292,8 @@
             loginBtn.disabled = true;
             loginBtn.innerHTML = 'Signing In<span class="loading"></span>';
 
-            fetch("http://localhost:5002/login", {
+            // Connect to Login microservice
+            fetch("https://login-backend-p3nz.onrender.com/login", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -308,7 +309,7 @@
                         
                         setTimeout(() => {
                             window.location.href = "index.html";
-                        }, 1500);
+                        }, 1000);
                     } else {
                         messageEl.textContent = "✗ Invalid username or password. Please try again.";
                         messageEl.className = "error";
@@ -320,7 +321,7 @@
                 })
             )
             .catch(error => {
-                messageEl.textContent = "✗ Connection error. Please try again.";
+                messageEl.textContent = "✗ Connection error. Backend may be starting up, please wait 30 seconds and try again.";
                 messageEl.className = "error";
                 console.error("Error during login:", error);
                 
