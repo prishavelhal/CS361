@@ -303,14 +303,15 @@
     </div>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
+
+document.addEventListener("DOMContentLoaded", function() {
             // Load income from localStorage
             const income = parseFloat(localStorage.getItem("totalIncome")) || 0;
-            document.getElementById("dashboard-income").textContent = `${income.toFixed(2)}`;
+            document.getElementById("dashboard-income").textContent = `$${income.toFixed(2)}`;
             
             // Load expenses from localStorage
             const expense = parseFloat(localStorage.getItem("totalExpense")) || 0;
-            document.getElementById("dashboard-expense").textContent = `${expense.toFixed(2)}`;
+            document.getElementById("dashboard-expense").textContent = `$${expense.toFixed(2)}`;
             
             // Calculate net balance
             const netBalance = income - expense;
@@ -328,7 +329,7 @@
             })
             .then(response => response.json())
             .then(data => {
-                document.getElementById("net-balance-value").textContent = `${data.net.toFixed(2)}`;
+                document.getElementById("net-balance-value").textContent = `$${data.net.toFixed(2)}`;
                 const netVal = data.net;
                 netElement.className = netVal >= 0 ? 'positive' : 'negative';
             })
@@ -389,3 +390,91 @@
     </script>
 </body>
 </html>
+        
+//         document.addEventListener("DOMContentLoaded", function() { 
+//             // Load income from localStorage
+//             const income = parseFloat(localStorage.getItem("totalIncome")) || 0;
+//             document.getElementById("dashboard-income").textContent = `$${income.toFixed(2)}`;
+            
+//             // Load expenses from localStorage
+//             const expense = parseFloat(localStorage.getItem("totalExpense")) || 0;
+//             document.getElementById("dashboard-expense").textContent = `$${expense.toFixed(2)}`;
+            
+//             // Calculate net balance
+//             const netBalance = income - expense;
+//             const netElement = document.getElementById("net-balance-value");
+//             netElement.textContent = `${netBalance.toFixed(2)}`;
+//             netElement.className = netBalance >= 0 ? 'positive' : 'negative';
+            
+//             // Fetch net balance from microservice (optional - if service is running)
+//             fetch("http://localhost:5004/net", {
+//                 method: 'POST',
+//                 headers: {
+//                     'Content-Type': 'application/json'
+//                 },
+//                 body: JSON.stringify({ income, expenses: expense })
+//             })
+//             .then(response => response.json())
+//             .then(data => {
+//                 document.getElementById("net-balance-value").textContent = `$${data.net.toFixed(2)}`;
+//                 const netVal = data.net;
+//                 netElement.className = netVal >= 0 ? 'positive' : 'negative';
+//             })
+//             .catch(error => {
+//                 console.log("Net balance microservice unavailable, using calculated value");
+//             });
+            
+//             // Fetch savings progress from microservice
+//             fetch('http://localhost:5005/progress')
+//             .then(response => response.json())
+//             .then(data => {
+//                 const progress = data.progress;
+//                 document.getElementById("savings-progress-fill").style.width = `${progress}%`;
+//                 document.getElementById("savings-progress-fill").textContent = `${progress}%`;
+//                 document.getElementById("savings-text").textContent = 
+//                     `${data.goal_name}: ${data.current_amount} of ${data.goal_amount} (${progress}%)`;
+//             })
+//             .catch(error => {
+//                 document.getElementById("savings-text").textContent = "Savings tracking unavailable";
+//                 console.log("Savings microservice unavailable");
+//             });
+            
+//             // Fetch reminder from microservice
+//             fetch("https://notifications-y13l.onrender.com/notifications")
+//             .then(response => response.json())
+//             .then(data => {
+//                 document.getElementById("reminder").textContent = data.notification;
+//             })
+//             .catch(error => {
+//                 // Fallback reminders if microservice is unavailable
+//                 const reminders = [
+//                     "Review your monthly budget and set savings goals!",
+//                     "Consider setting up automatic savings transfers",
+//                     "Check for subscription services you no longer use",
+//                     "Track your spending categories this month",
+//                     "Plan your financial goals for next quarter"
+//                 ];
+//                 document.getElementById("reminder").textContent = 
+//                     reminders[Math.floor(Math.random() * reminders.length)];
+//                 console.log("Notifications microservice unavailable, using fallback");
+//             });
+//         });
+
+//         // Check if user is logged in
+//         document.addEventListener("DOMContentLoaded", function() {
+//             const user = localStorage.getItem("userId");
+//             if(!user){
+//                 window.location.href = "login.html";
+//             }
+//         });
+
+//         function logout() {
+//             if (confirm("Are you sure you want to logout?")) {
+//                 localStorage.removeItem("userId");
+//                 window.location.href = "login.html";
+//             }
+//         }
+//     </script>
+// </body>
+// </html> 
+
