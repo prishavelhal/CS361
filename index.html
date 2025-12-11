@@ -320,7 +320,7 @@ document.addEventListener("DOMContentLoaded", function() {
             netElement.className = netBalance >= 0 ? 'positive' : 'negative';
             
             // Fetch net balance from microservice (optional - if service is running)
-            fetch("http://localhost:5004/net", {
+            fetch("https://cs361-km85.onrender.com/net", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -338,7 +338,7 @@ document.addEventListener("DOMContentLoaded", function() {
             });
             
             // Fetch savings progress from microservice
-            fetch('http://localhost:5005/progress')
+            fetch('https://savings-8ttz.onrender.com/progress')
             .then(response => response.json())
             .then(data => {
                 const progress = data.progress;
