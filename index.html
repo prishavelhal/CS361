@@ -1,258 +1,324 @@
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8"/>
-    <title>Finance Dashboard</title>
-    <link rel="stylesheet" href="css/style.css" />
-</head>
-<body>
-    <nav class="navigationbar">
-        <ul class="linkstopage">
-            <li><a href="index.html" title="You are currently on the Dashboard page.">Dashboard</a></li>
-            <li><a href="expenses.html" title="Want to view your expenses in more detail and add new ones or edit current ones? Click on this link!">Expenses</a></li>
-            <li><a href="income.html" title="Want to view your income in more detail and add more income or edit current ones? Click on this link!">Income</a></li>
-        </ul>
-    </nav>
-<main>
-    <h2>Dashboard</h2>
-    <h4>Welcome to your finance dashboard!</h4>
-    <p>Use this page to get a quick look at your finances OR Use the links in the nav bar to add income and expenses! Hover over the page names for Dashboard, Income, and Expenses, to learn more about each page before navigating!</p>
-    <p>NOTE: Any data you enter will only be accessible by you to ensure your privacy. We do not track or store your data, it is solely for you.</p>
-    <h3>Reminder</h3>
-    <p id="reminder">Loading...</p>
-    
-    <div class="cards">
-        <div class="card">
-            <h3>Total Income</h3>
-            <p id="dashboard-income"></p>
-        </div>
-        <div class="card">
-            <h3>Total Expenses</h3>
-            <p id="dashboard-expense"></p>
-        </div>
-        <div class="card">
-            <h3>Net Balance</h3>
-            <p id="net-balance-value">Loading...</p>
-        </div>
-        <div class="card">
-            <h3>Savings Progress</h3>
-            <div id="savings-progress" style="background-color: beige; border-radius: 5px; width: auto;">
-                <div id="savings-progress-fill" style="background-color: #a03c3c; width: 0%; height: 20px; border-radius:5px"></div>
-            </div>
-            <p id="savings-text">Loading...</p>
-        </div>
-    </div>
-    
-    <h3></h3>
-    <button onclick="logout()">Logout</button>
-    
-</main>
-
-<script>
-   document.addEventListener("DOMContentLoaded", function() {
-    const incomeDashboard = localStorage.getItem("totalIncome");
-    if (incomeDashboard) {
-        document.getElementById("dashboard-income").textContent = `$${incomeDashboard}`;
-    }
-    const expenseDashboard = localStorage.getItem("totalExpense");
-    if (expenseDashboard) {
-        document.getElementById("dashboard-expense").textContent = `$${expenseDashboard}`;
-    } else {
-        document.getElementById("dashboard-expense").textContent = `$0.00`;
-    }
- });
-
-    //Login microservice
-    document.addEventListener("DOMContentLoaded", function() {
-        const user = localStorage.getItem("userId");
-        if(!user){
-            window.location.href = "login.html";
-        }
-    });
-
-    //Reminder microservice
-    function getReminder(){
-        fetch("http://localhost:5001/notifications")
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById("reminder").textContent = data.notification;
-        })
-        .catch(error => {
-            console.error("Error fetching reminder:", error);
-            document.getElementById("reminder").textContent = "None";
-        });
-    }
-
-    document.addEventListener("DOMContentLoaded", getReminder);
-
-    //Logout
-    function logout() {
-        localStorage.removeItem("user");
-        window.location.href = "login.html";
-    }
-
-    //Net Balance microservice
-    document.addEventListener("DOMContentLoaded", function() {
-        const income = parseFloat(localStorage.getItem("totalIncome")) || 0;
-        const expense = parseFloat(localStorage.getItem("totalExpense")) || 0;
-
-        document.getElementById("dashboard-income").textContent = `$${income.toFixed(2)}`;
-        document.getElementById("dashboard-expense").textContent = `$${expense.toFixed(2)}`;
-
-        fetch("http://localhost:5004/net", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ income, expenses: expense })
-        })
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById("net-balance-value").textContent = `$${data.net.toFixed(2)}`;
-        })
-        .catch(error => {
-            document.getElementById("net-balance-value").textContent = "Error calculating net balance";
-            console.error("Error receiving net balance:", error);
-        });
-    });
-
-    //Savings progress microservice
-    fetch('http://localhost:5005/progress')
-    .then(response => response.json())
-    .then(data => {
-        const progress = data.progress;
-        document.getElementById("savings-progress-fill").style.width = `${progress}%`;
-        document.getElementById("savings-text").textContent = `${data.goal_name} Progress: $${data.current_amount} of $${data.goal_amount} (${progress}%)`;
-    })
-    .catch(error => {
-        document.getElementById("savings-text").textContent = "Error calculating savings progress";
-        console.error("Error receiving savings progress:", error);
-    });
-</script>
-</body>
-</html> -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Finance Dashboard</title>
-    <link rel="stylesheet" href="css/style.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Navigation */
+        nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 16px 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 8px;
+            list-style: none;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: #4a5568;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-links a:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .nav-links a.active {
+            background: #667eea;
+            color: white;
+        }
+
+        /* Dashboard Header */
+        .dashboard-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .dashboard-header h2 {
+            font-size: 32px;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+
+        .dashboard-header h4 {
+            font-size: 18px;
+            color: #667eea;
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+
+        .dashboard-header p {
+            color: #718096;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+
+        /* Reminder Section */
+        .reminder-section {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-radius: 16px;
+            padding: 20px 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #f59e0b;
+        }
+
+        .reminder-section h3 {
+            color: #92400e;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .reminder-section p {
+            color: #78350f;
+            font-size: 14px;
+        }
+
+        /* Cards Grid */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.15);
+        }
+
+        .card h3 {
+            color: #718096;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .card p {
+            font-size: 32px;
+            font-weight: 700;
+            color: #2d3748;
+        }
+
+        .card p.positive {
+            color: rgb(63, 165, 63);
+        }
+
+        .card p.negative {
+            color: #ef4444;
+        }
+
+        /* Savings Progress */
+        #savings-progress {
+            background: #e2e8f0;
+            border-radius: 12px;
+            height: 24px;
+            overflow: hidden;
+            margin: 16px 0;
+            position: relative;
+        }
+
+        #savings-progress-fill {
+            background: #667eea;
+            height: 100%;
+            border-radius: 12px;
+            transition: width 1s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        #savings-text {
+            font-size: 14px !important;
+            font-weight: 500 !important;
+            color: #4a5568 !important;
+            margin-top: 8px;
+        }
+
+        /* Logout Section */
+        .logout-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .logout-section button {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-section button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.3);
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #e2e8f0;
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard-header h2 { font-size: 24px; }
+            .cards { grid-template-columns: 1fr; }
+            nav { padding: 12px 16px; }
+            .nav-links a { padding: 10px 16px; font-size: 14px; }
+        }
+    </style>
 </head>
 <body>
-    <nav class="navigationbar">
-        <div class="nav-container">
-            <div class="linkstopage">
-                <a href="index.html" class="nav-link active" title="You are currently on the Dashboard page.">
-                    <span class="nav-icon">📊</span>
-                    <span class="nav-text">Dashboard</span>
-                </a>
-                <a href="expenses.html" class="nav-link" title="Want to view your expenses in more detail and add new ones or edit current ones? Click on this link!">
-                    <span class="nav-icon">💸</span>
-                    <span class="nav-text">Expenses</span>
-                </a>
-                <a href="income.html" class="nav-link" title="Want to view your income in more detail and add more income or edit current ones? Click on this link!">
-                    <span class="nav-icon">💵</span>
-                    <span class="nav-text">Income</span>
-                </a>
-            </div>
-        </div>
-    </nav>
+    <div class="container">
+        <nav>
+            <ul class="nav-links">
+                <li><a href="index.html" class="active">Dashboard</a></li>
+                <li><a href="expenses.html">Expenses</a></li>
+                <li><a href="income.html">Income</a></li>
+            </ul>
+        </nav>
 
-    <main>
-        <div class="dashboard-header">
-            <h2>💰 Finance Dashboard</h2>
-            <h4>Welcome to your finance dashboard!</h4>
-            <p>Use this page to get a quick look at your finances OR Use the links in the nav bar to add income and expenses! Hover over the page names for Dashboard, Income, and Expenses, to learn more about each page before navigating!</p>
-            <p>NOTE: Any data you enter will only be accessible by you to ensure your privacy. We do not track or store your data, it is solely for you.</p>
-        </div>
+        <main>
+            <div class="dashboard-header">
+                <h2>Finance Dashboard</h2>
+                <h4>Welcome back! Here's your financial overview</h4>
+                <p>Track your income, expenses, and savings all in one place. Your financial data is private and stored locally on your device.</p>
+            </div>
 
-        <div class="reminder-section">
-            <h3>💡 Financial Reminder</h3>
-            <p id="reminder">Loading...</p>
-        </div>
-        
-        <div class="cards">
-            <div class="card">
-                <h3>Total Income</h3>
-                <p id="dashboard-income">$0.00</p>
+            <div class="reminder-section">
+                <h3>💡 Financial Reminder</h3>
+                <p id="reminder">Review your monthly budget and set savings goals!</p>
             </div>
-            <div class="card">
-                <h3>Total Expenses</h3>
-                <p id="dashboard-expense">$0.00</p>
-            </div>
-            <div class="card">
-                <h3>Net Balance</h3>
-                <p id="net-balance-value">Loading...</p>
-            </div>
-            <div class="card">
-                <h3>Savings Progress</h3>
-                <div id="savings-progress">
-                    <div id="savings-progress-fill" style="width: 0%"></div>
+            
+            <div class="cards">
+                <div class="card">
+                    <h3>Total Income</h3>
+                    <p id="dashboard-income">$0.00</p>
                 </div>
-                <p id="savings-text">Loading...</p>
+                <div class="card">
+                    <h3>Total Expenses</h3>
+                    <p id="dashboard-expense">$0.00</p>
+                </div>
+                <div class="card">
+                    <h3>Net Balance</h3>
+                    <p id="net-balance-value">$0.00</p>
+                </div>
+                <div class="card">
+                    <h3>Savings Progress</h3>
+                    <div id="savings-progress">
+                        <div id="savings-progress-fill">0%</div>
+                    </div>
+                    <p id="savings-text">No savings goal set</p>
+                </div>
             </div>
-        </div>
-        
-        <div class="logout-section">
-            <button onclick="logout()">🚪 Logout</button>
-        </div>
-    </main>
+            
+            <div class="logout-section">
+                <button onclick="logout()">Logout</button>
+            </div>
+        </main>
+    </div>
 
     <script>
-       document.addEventListener("DOMContentLoaded", function() {
-        const incomeDashboard = localStorage.getItem("totalIncome");
-        if (incomeDashboard) {
-            document.getElementById("dashboard-income").textContent = `$${incomeDashboard}`;
-        } else {
-            document.getElementById("dashboard-income").textContent = `$0.00`;
-        }
-        const expenseDashboard = localStorage.getItem("totalExpense");
-        if (expenseDashboard) {
-            document.getElementById("dashboard-expense").textContent = `$${expenseDashboard}`;
-        } else {
-            document.getElementById("dashboard-expense").textContent = `$0.00`;
-        }
-     });
-
-        //Login microservice
         document.addEventListener("DOMContentLoaded", function() {
-            const user = localStorage.getItem("userId");
-            if(!user){
-                window.location.href = "login.html";
-            }
-        });
-
-        //Reminder microservice
-        function getReminder(){
-            fetch("http://localhost:5001/notifications")
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById("reminder").textContent = data.notification;
-            })
-            .catch(error => {
-                console.error("Error fetching reminder:", error);
-                document.getElementById("reminder").textContent = "Review your monthly budget and set savings goals!";
-            });
-        }
-
-        document.addEventListener("DOMContentLoaded", getReminder);
-
-        //Logout
-        function logout() {
-            localStorage.removeItem("user");
-            window.location.href = "login.html";
-        }
-
-        //Net Balance microservice
-        document.addEventListener("DOMContentLoaded", function() {
+            // Load income from localStorage
             const income = parseFloat(localStorage.getItem("totalIncome")) || 0;
-            const expense = parseFloat(localStorage.getItem("totalExpense")) || 0;
-
             document.getElementById("dashboard-income").textContent = `$${income.toFixed(2)}`;
+            
+            // Load expenses from localStorage
+            const expense = parseFloat(localStorage.getItem("totalExpense")) || 0;
             document.getElementById("dashboard-expense").textContent = `$${expense.toFixed(2)}`;
-
+            
+            // Calculate net balance
+            const netBalance = income - expense;
+            const netElement = document.getElementById("net-balance-value");
+            netElement.textContent = `${netBalance.toFixed(2)}`;
+            netElement.className = netBalance >= 0 ? 'positive' : 'negative';
+            
+            // Fetch net balance from microservice (optional - if service is running)
             fetch("http://localhost:5004/net", {
                 method: 'POST',
                 headers: {
@@ -263,26 +329,63 @@
             .then(response => response.json())
             .then(data => {
                 document.getElementById("net-balance-value").textContent = `$${data.net.toFixed(2)}`;
+                const netVal = data.net;
+                netElement.className = netVal >= 0 ? 'positive' : 'negative';
             })
             .catch(error => {
-                document.getElementById("net-balance-value").textContent = "Error calculating net balance";
-                console.error("Error receiving net balance:", error);
+                console.log("Net balance microservice unavailable, using calculated value");
+            });
+            
+            // Fetch savings progress from microservice
+            fetch('http://localhost:5005/progress')
+            .then(response => response.json())
+            .then(data => {
+                const progress = data.progress;
+                document.getElementById("savings-progress-fill").style.width = `${progress}%`;
+                document.getElementById("savings-progress-fill").textContent = `${progress}%`;
+                document.getElementById("savings-text").textContent = 
+                    `${data.goal_name}: ${data.current_amount} of ${data.goal_amount} (${progress}%)`;
+            })
+            .catch(error => {
+                document.getElementById("savings-text").textContent = "Savings tracking unavailable";
+                console.log("Savings microservice unavailable");
+            });
+            
+            // Fetch reminder from microservice
+            fetch("http://localhost:5001/notifications")
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("reminder").textContent = data.notification;
+            })
+            .catch(error => {
+                // Fallback reminders if microservice is unavailable
+                const reminders = [
+                    "Review your monthly budget and set savings goals!",
+                    "Consider setting up automatic savings transfers",
+                    "Check for subscription services you no longer use",
+                    "Track your spending categories this month",
+                    "Plan your financial goals for next quarter"
+                ];
+                document.getElementById("reminder").textContent = 
+                    reminders[Math.floor(Math.random() * reminders.length)];
+                console.log("Notifications microservice unavailable, using fallback");
             });
         });
 
-        //Savings progress microservice
-        fetch('http://localhost:5005/progress')
-        .then(response => response.json())
-        .then(data => {
-            const progress = data.progress;
-            document.getElementById("savings-progress-fill").style.width = `${progress}%`;
-            document.getElementById("savings-progress-fill").textContent = `${progress}%`;
-            document.getElementById("savings-text").textContent = `${data.goal_name} Progress: $${data.current_amount} of $${data.goal_amount} (${progress}%)`;
-        })
-        .catch(error => {
-            document.getElementById("savings-text").textContent = "Error calculating savings progress";
-            console.error("Error receiving savings progress:", error);
+        // Check if user is logged in
+        document.addEventListener("DOMContentLoaded", function() {
+            const user = localStorage.getItem("userId");
+            if(!user){
+                window.location.href = "login.html";
+            }
         });
+
+        function logout() {
+            if (confirm("Are you sure you want to logout?")) {
+                localStorage.removeItem("userId");
+                window.location.href = "login.html";
+            }
+        }
     </script>
 </body>
 </html>

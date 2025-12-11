@@ -2,270 +2,611 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8"/>
-    <title>Income Page</title>
-    <link rel="stylesheet" href="css/style.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Income Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Navigation */
+        nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 16px 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 8px;
+            list-style: none;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: #4a5568;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-links a:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .nav-links a.active {
+            background: #667eea;
+            color: white;
+        }
+
+        /* Main Content */
+        main {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            font-size: 32px;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+
+        h3 {
+            font-size: 20px;
+            color: #667eea;
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+
+        main > p {
+            color: #718096;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        /* Action Buttons */
+        .actionButton {
+            display: flex;
+            gap: 12px;
+            margin: 24px 0;
+            flex-wrap: wrap;
+        }
+
+        .button, .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .button {
+            background: #667eea;
+            color: white;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-danger {
+            background: #dc2626;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.3);
+        }
+
+        /* Total Display */
+        main > h3:last-of-type {
+            background: rgb(63, 165, 63);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 12px;
+            margin: 24px 0;
+            font-size: 24px;
+        }
+
+        /* Table */
+        .incomeData {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 24px;
+        }
+
+        .incomeData thead {
+            background: #f7fafc;
+        }
+
+        .incomeData th {
+            padding: 16px;
+            text-align: left;
+            font-weight: 600;
+            color: #4a5568;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .incomeData th:first-child {
+            border-top-left-radius: 12px;
+        }
+
+        .incomeData th:last-child {
+            border-top-right-radius: 12px;
+        }
+
+        .incomeData td {
+            padding: 16px;
+            color: #2d3748;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .incomeData tbody tr {
+            transition: background 0.2s ease;
+        }
+
+        .incomeData tbody tr:hover {
+            background: #f7fafc;
+        }
+
+        .incomeData tbody tr:last-child td:first-child {
+            border-bottom-left-radius: 12px;
+        }
+
+        .incomeData tbody tr:last-child td:last-child {
+            border-bottom-right-radius: 12px;
+        }
+
+        /* Action Buttons in Table */
+        .actionButton.edit, .actionButton.delete {
+            padding: 8px 16px;
+            font-size: 13px;
+            margin: 0 4px;
+        }
+
+        .actionButton.edit {
+            background: #667eea;
+            color: white;
+            border: none;
+            display: flex;
+            gap: 12px;
+            margin: 24px 0;
+            flex-wrap: wrap;
+            border-radius: 10px;
+        }
+
+        .actionButton.delete {
+            background: #dc2626;
+            color: white;
+            border: none;;
+            display: flex;
+            gap: 12px;
+            margin: 24px 0;
+            flex-wrap: wrap;
+            border-radius: 10px;
+        }
+
+        /* Modal */
+        .add {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .add[style*="display: block"] {
+            display: flex !important;
+        }
+
+        .addData {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            animation: slideUp 0.3s ease;
+            position: relative;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .addData h3 {
+            font-size: 24px;
+            color: #2d3748;
+            margin-bottom: 24px;
+        }
+
+        .close {
+            position: absolute;
+            top: 20px;
+            right: 24px;
+            font-size: 28px;
+            color: #a0aec0;
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .close:hover {
+            background: #f7fafc;
+            color: #4a5568;
+        }
+
+        /* Form */
+        form label {
+            display: block;
+            margin-bottom: 8px;
+            color: #4a5568;
+            font-weight: 600;
+            font-size: 14px;
+            margin-top: 16px;
+        }
+
+        form input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        form input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        form button[type="submit"] {
+            width: 100%;
+            margin-top: 24px;
+        }
+
+        /* Confirm Modal */
+        .confirmDeletes {
+            text-align: center;
+            max-width: 400px;
+        }
+
+        .confirmDeletes h3 {
+            color: #2d3748;
+            margin-bottom: 16px;
+        }
+
+        .confirmDeletes p {
+            color: #718096;
+            margin-bottom: 24px;
+        }
+
+        .confirmButton {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .confirmButton .button {
+            flex: 1;
+        }
+
+        .cancel {
+            background: #e2e8f0 !important;
+            color: #4a5568 !important;
+        }
+
+        .cancel:hover {
+            background: #cbd5e0 !important;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #a0aec0;
+        }
+
+        .empty-state p {
+            font-size: 16px;
+            margin-top: 16px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h2 { font-size: 24px; }
+            .incomeData { font-size: 14px; }
+            .incomeData th, .incomeData td { padding: 12px 8px; }
+            main { padding: 24px 16px; }
+        }
+    </style>
 </head>
 <body>
-    <nav class="navigationbar">
-        <div class="nav-container">
-            <div class="linkstopage">
-                <a href="index.html" class="nav-link active" title="You are currently on the Dashboard page.">
-                    <span class="nav-icon">📊</span>
-                    <span class="nav-text">Dashboard</span>
-                </a>
-                <a href="expenses.html" class="nav-link" title="Want to view your expenses in more detail and add new ones or edit current ones? Click on this link!">
-                    <span class="nav-icon">💸</span>
-                    <span class="nav-text">Expenses</span>
-                </a>
-                <a href="income.html" class="nav-link" title="Want to view your income in more detail and add more income or edit current ones? Click on this link!">
-                    <span class="nav-icon">💵</span>
-                    <span class="nav-text">Income</span>
-                </a>
+    <div class="container">
+        <nav>
+            <ul class="nav-links">
+                <li><a href="index.html">Dashboard</a></li>
+                <li><a href="expenses.html">Expenses</a></li>
+                <li><a href="income.html" class="active">Income</a></li>
+            </ul>
+        </nav>
+
+        <main>
+            <h2>Income Tracker</h2>
+            <h3>Track Your Earnings</h3>
+            <p>Use this page to add income sources to keep track of your total income. Click the "Add Income" button to add a new income source and fill in the income information in the pop-up form!</p>
+            <p><strong>NOTE:</strong> Any data you enter will only be accessible by you to ensure your privacy. We do not track or store your data, it is solely for you.</p>
+            
+            <div class="actionButton">
+                <button class="button" onclick="newIncome()">+ Add Income</button>
+                <button class="btn btn-danger" onclick="confirmDeleteAll()">- Delete All</button>
+            </div>
+            
+            <h3>Total Income: $<span id="totalIncome">0.00</span></h3>
+            
+            <table class="incomeData">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Amount</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="incomeDataTable">
+                </tbody>
+            </table>
+        </main>
+    </div>
+
+    <div class="add" id="addIncome">
+        <div class="addData">
+            <span class="close" onclick="closeIncome()">&times;</span>
+            <h3 id="incomeModalTitle">Add Income</h3>
+            <form id="incomeEntry">
+                <label>Name:</label>
+                <input type="text" id="incomeName" required/>
+
+                <label>Amount:</label>
+                <input type="number" step="0.01" id="incomeAmount" required/>
+
+                <label>Date:</label>
+                <input type="date" id="incomeDate" required/>
+
+                <input type="hidden" id="incomeId" value=""/>
+                <button type="submit" class="button">Submit</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="add" id="confirmModal">
+        <div class="addData confirmDeletes">
+            <h3 id="confirmTitle">Confirm</h3>
+            <p id="confirmMessage">Are you sure you would like to delete?</p>
+            <div class="confirmButton">
+                <button class="button" id="confirmYes">Yes</button>
+                <button class="button cancel" id="confirmNo">No</button>
             </div>
         </div>
-    </nav>
-<main>
-    <h2>Income Tracker</h2>
-    <h3>This is your income tracking page!</h3>
-    <p>Use this page to add income sources to keep track of your total income. Click the "add income" button to add a new income source and fill in the income information in the pop-up form!</p>
-    <p>NOTE: Any data you enter will only be accessible by you to ensure your privacy. We do not track or store your data, it is solely for you.</p>
-    <div class="actionButton">
-        <button class="button" onclick="newIncome()">+ Add Income</button>
-        <button class="btn btn-danger" onclick="confirmDeleteAll()">Delete All</button>
     </div>
-    <h3>Total Income: $<span id="totalIncome">0.00</span></h3>
-    <table class="incomeData">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Amount</th>
-                <th>Date</th>
-                <th>Edit/Delete</th>
-            </tr>
-        </thead>
-        <tbody id="incomeDataTable">
-        </tbody>
-    </table>
-</main>
 
-<div class="add" id="addIncome" style="display: none;">
-    <div class="addData">
-        <span class="close" onclick="closeIncome()">&times;</span>
-        <h3 id="incomeModalTitle">Add Income</h3>
-        <form id="incomeEntry">
-            <label>Name:</label>
-            <input type="text" id="incomeName" required/>
+    <script>
+        const incomeModal = document.getElementById("addIncome");
+        const confirmModal = document.getElementById("confirmModal");
+        const incomeForm = document.getElementById("incomeEntry");
+        const incomeTable = document.getElementById("incomeDataTable");
+        const incomeTotal = document.getElementById("totalIncome");
+        const confirmYes = document.getElementById("confirmYes");
+        const confirmNo = document.getElementById("confirmNo");
 
-            <label>Amount:</label>
-            <input type="number" step="0.01" id="incomeAmount" required/>
+        let incomeList = [];
+        let currentEditId = null;
+        let deleteItemId = null;
 
-            <label>Date:</label>
-            <input type="date" id="incomeDate" required/>
-
-            <input type="hidden" id="incomeId" value=""/>
-            <button type="submit" class="button">Submit</button>
-        </form>
-    </div>
-</div>
-
-<div class="add" id="confirmModal" style="display: none;">
-    <div class="addData confirmDeletes">
-        <h3 id="confirmTitle">Confirm</h3>
-        <p id="confirmMessage">Are you sure you would like to delete?</p>
-        <div class="confirmButton">
-            <button class="button" id="confirmYes">yes</button>
-            <button class="button cancel" id="confirmNo">no</button>
-        </div>
-    </div>
-</div>
-<script>
-    const incomeModal = document.getElementById("addIncome");
-    const confirmModal = document.getElementById("confirmModal");
-    const incomeForm = document.getElementById("incomeEntry");
-    const incomeTable = document.getElementById("incomeDataTable");
-    const incomeTotal = document.getElementById("totalIncome");
-    const confirmYes = document.getElementById("confirmYes");
-    const confirmNo = document.getElementById("confirmNo");
-
-    let incomeList = [];
-    let currentEditId = null;
-    let deleteItemId = null;
-
-    document.addEventListener("DOMContentLoaded", function() {
-        loadIncomeData();
-        displayIncomeData();
-    });
-
-    function loadIncomeData() {
-        const savedIncomeData = localStorage.getItem("incomeData");
-        // if (savedIncomeData){
-        //     incomeList = JSON.parse(savedData);
-        // }
-        if(savedIncomeData && savedIncomeData !== "undefined"){
-            try {
-                incomeList = JSON.parse(savedIncomeData);
-                console.log("Loaded income data: ", incomeList);
-            } catch (e) {
-                console.error("Error parsing income data:", e);
-                incomeList = [];
-            }
-        } else{
-            incomeList = [];
-        }
-    }
-
-    function saveIncomeData() {
-        localStorage.setItem("incomeData", JSON.stringify(incomeList));
-        const total = calcTotalIncome();
-        localStorage.setItem("totalIncome", total.toFixed(2));
-        console.log("Saved income data", incomeList);
-    }
-
-
-    function calcTotalIncome(){
-        return incomeList.reduce((sum,entry) => sum + parseFloat(entry.amount), 0);   
-    }
-
-    function displayIncomeData(){
-        incomeTable.innerHTML = "";
-
-        if (incomeList.length === 0){
-            console.log("No income entries to display");
-            return;
-        }
-
-        incomeList.forEach((income, index) => {
-            const row = document.createElement("tr");
-            row.innerHTML = `
-                <td>${income.name}</td>
-                <td>$${parseFloat(income.amount).toFixed(2)}</td>
-                <td>${income.date}</td>
-                <td>
-                    <button class="actionButton edit" onclick="editIncome(${index})">Edit</button>
-                    <button class="actionButton delete" onclick="confirmDelete(${index})">Delete</button>
-                </td>
-            `;
-            incomeTable.appendChild(row);
+        document.addEventListener("DOMContentLoaded", function() {
+            loadIncomeData();
+            displayIncomeData();
         });
 
-        const total = calcTotalIncome();
-        incomeTotal.textContent = total.toFixed(2);
-    }
-    // incomeForm.addEventListener("submit", function (e){
-    //     e.preventDefault();
-    //     const name = document.getElementById("incomeName").value;
-    //     const amount = parseFloat(document.getElementById("incomeAmount").value);
-    //     const date = document.getElementById("incomeDate").value;
-
-    //     incomeList.push({name, amount, date});
-
-    //     const newRow = document.createElement("tr");
-    //   newRow.innerHTML = `
-    //     <td>${name}</td>
-    //     <td>${amount.toFixed(2)}</td>
-    //     <td>${date}</td>
-    //     `;
-
-    //     incomeTable.appendChild(newRow);
-
-    //     calcTotalIncome();
-    //     closeIncome();
-    // });
-
-    // window.onclick = function (event){
-    //     if (event.target == incomeModal){
-    //         closeIncome();
-    //     }
-    // };
-
-    function newIncome(){
-        document.getElementById("incomeModalTitle").textContent = "Add Income";
-        incomeForm.reset();
-        document.getElementById("incomeId").value = "";
-        currentEditId = null;
-        incomeModal.style.display = "block";
-    }
-
-    function editIncome(index){
-        document.getElementById("incomeModalTitle").textContent = "Edit Income";
-        const income = incomeList[index];
-        document.getElementById("incomeName").value = income.name;
-        document.getElementById("incomeAmount").value = income.amount;
-        document.getElementById("incomeDate").value = income.date;
-        document.getElementById("incomeId").value = index;
-        currentEditId = index;
-        incomeModal.style.display = "block";
-    }
-
-    function confirmDelete(index){
-        deleteItemId = index;
-        document.getElementById("confirmTitle").textContent = "Delete Income";
-        document.getElementById("confirmMessage").textContent = "Are you sure you would like to delete this entry?";
-        confirmModal.style.display = "block";
-
-        confirmYes.onclick = function() {
-            deleteIncome(deleteItemId);
-            closeConfirmModal();
-        };
-        confirmNo.onclick = closeConfirmModal;
-    }
-
-    function confirmDeleteAll(){
-        document.getElementById("confirmTitle").textContent = "Delete All Income Entries";
-        document.getElementById("confirmMessage").textContent = "Are you sure you would like to delete ALL?";
-        confirmModal.style.display = "block";
-
-        confirmYes.onclick = function (){
-            deleteAll();
-            closeConfirmModal();
-        };
-        confirmNo.onclick = closeConfirmModal;
-    }
-
-    function deleteIncome(index) {
-        incomeList.splice(index, 1);
-        saveIncomeData();
-        displayIncomeData();
-    }
-
-    function deleteAll(){
-        incomeList = [];
-        saveIncomeData();
-        displayIncomeData();
-    }
-
-    function closeIncome() {
-        incomeModal.style.display = "none";
-        incomeForm.reset();
-    }
-
-    function closeConfirmModal() {
-        confirmModal.style.display = "none";
-    }
-
-    incomeForm.addEventListener("submit", function(e) {
-        e.preventDefault();
-        const name = document.getElementById("incomeName").value;
-        const amount = parseFloat(document.getElementById("incomeAmount").value);
-        const date = document.getElementById("incomeDate").value;
-
-        const id = Date.now().toString();
-
-        if(currentEditId !== null){
-            incomeList[currentEditId] = {name, amount, date, id: incomeList[currentEditId].id };
-        }else{
-            incomeList.push({name, amount, date, id});
+        function loadIncomeData() {
+            const savedIncomeData = localStorage.getItem("incomeData");
+            if(savedIncomeData && savedIncomeData !== "undefined"){
+                try {
+                    incomeList = JSON.parse(savedIncomeData);
+                    console.log("Loaded income data: ", incomeList);
+                } catch (e) {
+                    console.error("Error parsing income data:", e);
+                    incomeList = [];
+                }
+            } else{
+                incomeList = [];
+            }
         }
 
-        saveIncomeData();
-        displayIncomeData();
-        closeIncome();
-    });
+        function saveIncomeData() {
+            localStorage.setItem("incomeData", JSON.stringify(incomeList));
+            const total = calcTotalIncome();
+            localStorage.setItem("totalIncome", total.toFixed(2));
+            console.log("Saved income data", incomeList);
+        }
 
-    // function closeIncome(){
-    //     incomeModal.style.display = "none";
-    //     incomeForm.reset();
-    // }
-</script>
+        function calcTotalIncome(){
+            return incomeList.reduce((sum,entry) => sum + parseFloat(entry.amount), 0);   
+        }
+
+        function displayIncomeData(){
+            incomeTable.innerHTML = "";
+
+            if (incomeList.length === 0){
+                incomeTable.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="empty-state">
+                            <p>💰 No income recorded yet. Click "Add Income" to get started!</p>
+                        </td>
+                    </tr>
+                `;
+                incomeTotal.textContent = "0.00";
+                return;
+            }
+
+            incomeList.forEach((income, index) => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${income.name}</td>
+                    <td><strong>$${parseFloat(income.amount).toFixed(2)}</strong></td>
+                    <td>${income.date}</td>
+                    <td>
+                        <button class="actionButton edit" onclick="editIncome(${index})">Edit</button>
+                        <button class="actionButton delete" onclick="confirmDelete(${index})">Delete</button>
+                    </td>
+                `;
+                incomeTable.appendChild(row);
+            });
+
+            const total = calcTotalIncome();
+            incomeTotal.textContent = total.toFixed(2);
+        }
+
+        function newIncome(){
+            document.getElementById("incomeModalTitle").textContent = "Add Income";
+            incomeForm.reset();
+            document.getElementById("incomeId").value = "";
+            currentEditId = null;
+            incomeModal.style.display = "block";
+        }
+
+        function editIncome(index){
+            document.getElementById("incomeModalTitle").textContent = "Edit Income";
+            const income = incomeList[index];
+            document.getElementById("incomeName").value = income.name;
+            document.getElementById("incomeAmount").value = income.amount;
+            document.getElementById("incomeDate").value = income.date;
+            document.getElementById("incomeId").value = index;
+            currentEditId = index;
+            incomeModal.style.display = "block";
+        }
+
+        function confirmDelete(index){
+            deleteItemId = index;
+            document.getElementById("confirmTitle").textContent = "Delete Income";
+            document.getElementById("confirmMessage").textContent = "Are you sure you would like to delete this entry?";
+            confirmModal.style.display = "block";
+
+            confirmYes.onclick = function() {
+                deleteIncome(deleteItemId);
+                closeConfirmModal();
+            };
+            confirmNo.onclick = closeConfirmModal;
+        }
+
+        function confirmDeleteAll(){
+            document.getElementById("confirmTitle").textContent = "Delete All Income";
+            document.getElementById("confirmMessage").textContent = "Are you sure you would like to delete ALL income entries? This cannot be undone.";
+            confirmModal.style.display = "block";
+
+            confirmYes.onclick = function (){
+                deleteAll();
+                closeConfirmModal();
+            };
+            confirmNo.onclick = closeConfirmModal;
+        }
+
+        function deleteIncome(index) {
+            incomeList.splice(index, 1);
+            saveIncomeData();
+            displayIncomeData();
+        }
+
+        function deleteAll(){
+            incomeList = [];
+            saveIncomeData();
+            displayIncomeData();
+        }
+
+        function closeIncome() {
+            incomeModal.style.display = "none";
+            incomeForm.reset();
+        }
+
+        function closeConfirmModal() {
+            confirmModal.style.display = "none";
+        }
+
+        incomeForm.addEventListener("submit", function(e) {
+            e.preventDefault();
+            const name = document.getElementById("incomeName").value;
+            const amount = parseFloat(document.getElementById("incomeAmount").value);
+            const date = document.getElementById("incomeDate").value;
+
+            const id = Date.now().toString();
+
+            if(currentEditId !== null){
+                incomeList[currentEditId] = {name, amount, date, id: incomeList[currentEditId].id || id};
+            }else{
+                incomeList.push({name, amount, date, id});
+            }
+
+            saveIncomeData();
+            displayIncomeData();
+            closeIncome();
+        });
+    </script>
 </body>
 </html>
